@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
                 printf("Error, please specify parameter value for nodes (-n/--nodes)\n");
                 return 1;
             }
-            nodes_str = malloc(strlen((argv[i]) + 1) * sizeof(char));
+            nodes_str = malloc((strlen(argv[i]) + 1) * sizeof(char));
             strcpy(nodes_str, argv[i]);
 
             nodes[0] = strtok(nodes_str, " ");
