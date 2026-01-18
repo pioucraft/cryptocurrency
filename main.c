@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 #define MAX_NODES_LENGTH 128
 
@@ -32,14 +35,49 @@ int main(int argc, char *argv[]) {
             for(int j = 1; j < MAX_NODES_LENGTH; j++) {
                 char* strtoked = strtok(NULL, " ");
                 nodes[j] = strtoked ? strtoked : " ";
-
-                printf("%s\n", nodes[j - 1]);
             }
         }
     }
+
+    // 1. Create a socket (AF_INET for IPv4, SOCK_STREAM for TCP)
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_fd < 0) {
+        perror("Error creating socket");
+        return 1;
+    }
+
+    // 2. Define the server address
+    struct sockaddr_in address = {
+        .sin_family = AF_INET,
+        .sin_port = htons(port),
+        .sin_addr.s_addr = INADDR_ANY
+    };
+
+    // 3. Bind the socket to the port and address
+    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
+        perror("Error binding socket");
+        close(server_fd);
+        return 1;
+    }
+
+    // 4. Start listening for incoming connections
+    if (listen(server_fd, 500) < 0) {
+        perror("Error listening on socket");
+        close(server_fd);
+        return 1;
+    }
+    
     printf("Started listening on port : %d\n", port);
+
+    while(1) {
+        int client_fd = accept(server_fd, NULL, NULL);
+
+        char* response = "hello";
+        send(client_fd, response, strlen(response), 0);
+    }
 
     free(nodes_str);
     return 0;
 }
+
 
