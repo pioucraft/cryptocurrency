@@ -69,11 +69,31 @@ int main(int argc, char *argv[]) {
 
     printf("Started listening on port : %d\n", port);
 
-    while(1) {
-        int client_fd = accept(server_fd, NULL, NULL);
+    int stdin_fd = 0;
 
-        char* response = "hello";
-        send(client_fd, response, strlen(response), 0);
+    fd_set fds;
+    int max_fd = (stdin_fd > server_fd ? stdin_fd : server_fd) + 1;
+
+
+    while(1) {
+        FD_ZERO(&fds);
+        FD_SET(stdin_fd, &fds);
+        FD_SET(server_fd, &fds);
+        select(max_fd, &fds, NULL, NULL, NULL);
+
+        if (FD_ISSET(stdin_fd, &fds)) {
+            char buf[1024];
+            ssize_t n = read(stdin_fd, buf, sizeof(buf));
+            if (n > 0) printf("%s", buf);
+        }
+        if (FD_ISSET(server_fd, &fds)) {
+
+            int client_fd = accept(server_fd, NULL, NULL);
+
+            char* response = "hello";
+            send(client_fd, response, strlen(response), 0);
+            close(client_fd);
+        }
     }
 
     free(nodes_str);
