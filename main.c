@@ -5,6 +5,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "client.c"
+
 #define MAX_NODES_LENGTH 128
 
 int port = 53565;
@@ -68,6 +70,7 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Started listening on port : %d\n", port);
+    printf("Usage : '<receiver> <amout>\n");
 
     int stdin_fd = 0;
 
@@ -83,8 +86,11 @@ int main(int argc, char *argv[]) {
 
         if (FD_ISSET(stdin_fd, &fds)) {
             char buf[1024];
-            ssize_t n = read(stdin_fd, buf, sizeof(buf));
-            if (n > 0) printf("%s", buf);
+            ssize_t n = read(stdin_fd, buf, sizeof(buf) - 1);
+            if (n > 0) {
+                buf[n] = '\0';
+                client_input_handler(buf);
+            }
         }
         if (FD_ISSET(server_fd, &fds)) {
 
