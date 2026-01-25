@@ -92,12 +92,7 @@ int verify_signature(const char* pub_file, const char* message, const unsigned c
     EVP_MD_CTX_free(ctx);
     EVP_PKEY_free(pkey);
     
-    if (result == 1) {
-        printf("Signature is VALID\n");
-    } else {
-        printf("Signature is INVALID\n");
-    }
-    return result == 1;
+    return result == 1; // 1 if valud, 0 if invalid
 }
 
 int main() {

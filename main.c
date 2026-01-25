@@ -8,6 +8,7 @@
 #include <openssl/pem.h>
 #include <openssl/err.h>
 
+#incliude "crypto.c"
 #include "client.c"
 
 #define MAX_NODES_LENGTH 128
@@ -17,7 +18,6 @@ int nodes_length = 0;
 char* nodes[MAX_NODES_LENGTH];
 char* nodes_str;
 char* private_key_path = "private.pem";
-EVP_PKEY *pkey;
 
 int main(int argc, char *argv[]) {
     for(int i = 1; i < argc; i++) {
@@ -52,20 +52,6 @@ int main(int argc, char *argv[]) {
             }
             private_key_path = argv[i];
         }
-    }
-
-    // read private_key_path
-    FILE* key_file = fopen(private_key_path, "r");
-    if(key_file == NULL) {
-        printf("Error, could not open private key file: %s\n", private_key_path);
-        return 1;
-    }
-
-    pkey = PEM_read_PrivateKey(key_file, NULL, NULL, NULL);
-    fclose(key_file);
-
-    if (!pkey) {
-        ERR_print_errors_fp(stderr);
     }
 
     // 1. Create a socket (AF_INET for IPv4, SOCK_STREAM for TCP)

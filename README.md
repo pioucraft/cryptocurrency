@@ -6,5 +6,5 @@ openssl rsa -in private.pem -pubout -out public.pem
 
 # Compiling :
 ```sh
-gcc main.c client.c -lssl -lcrypto
+gcc main.c -lssl -lcrypto
 ```
