@@ -8,7 +8,7 @@
 #include <openssl/pem.h>
 #include <openssl/err.h>
 
-#incliude "crypto.c"
+#include "crypto.c"
 #include "client.c"
 
 #define MAX_NODES_LENGTH 128
