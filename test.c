@@ -55,7 +55,7 @@ int sign_message(const char* priv_file, const char* message, unsigned char* sign
     return 1;
 }
 
-// Verify signature with public key
+// Verify signature with public key - FIXED VERSION
 int verify_signature(const char* pub_file, const char* message, const unsigned char* signature, size_t sig_len) {
     FILE* pub_fd = fopen(pub_file, "r");
     if (!pub_fd) {
@@ -63,7 +63,8 @@ int verify_signature(const char* pub_file, const char* message, const unsigned c
         return 0;
     }
     
-    EVP_PKEY* pkey = PEM_read_PublicKey(pub_fd, NULL, NULL, NULL);
+    // Fixed: Use PEM_read_PUBKEY instead of PEM_read_PublicKey
+    EVP_PKEY* pkey = PEM_read_PUBKEY(pub_fd, NULL, NULL, NULL);
     fclose(pub_fd);
     
     if (!pkey) {
@@ -109,7 +110,7 @@ int main() {
     
     printf("Enter message to sign: ");
     fgets(message, MAX_MSG_LEN, stdin);
-    message[strcspn(message, "\n")] = 0;  // Remove newline
+    message[strcspn(message, "\n")] = 0;
     
     // Sign the message
     if (!sign_message("private.pem", message, signature)) {
@@ -120,7 +121,7 @@ int main() {
     fgets(verify_msg, MAX_MSG_LEN, stdin);
     verify_msg[strcspn(verify_msg, "\n")] = 0;
     
-    // Verify signature
+    // Verify signature - pass actual signature length
     verify_signature("public.pem", verify_msg, signature, SIG_LEN);
     
     return 0;
