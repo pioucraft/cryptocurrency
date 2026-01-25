@@ -54,6 +54,10 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    // load private key
+    EVP_PKEY* private_key = load_key(private_key_path, 0);
+
+
     // 1. Create a socket (AF_INET for IPv4, SOCK_STREAM for TCP)
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
